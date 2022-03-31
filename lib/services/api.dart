@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 
 class Api {
@@ -32,5 +32,21 @@ class Api {
 
   Future getCity() async {
     return _dio.get(_ipUrl);
+  }
+
+  errorDialog(context) {
+    showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text('Erro!'),
+        content: const Text('Não foi possível realizar esta busca'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(context, 'OK'),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 }

@@ -39,19 +39,7 @@ class _HomePageState extends State<HomePage> {
         services.city = aux;
         isLoading = false;
       });
-      showDialog<String>(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: const Text('Erro!'),
-          content: const Text('Não foi possível realizar esta busca'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.pop(context, 'OK'),
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
+      services.errorDialog(context);
     }).then((value) {
       setState(() {
         data = value.data;

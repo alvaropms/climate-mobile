@@ -19,8 +19,8 @@ class _mainComponentState extends State<mainComponent> {
 
   @override
   Widget build(BuildContext context) {
-    var date = DateTime.fromMicrosecondsSinceEpoch(
-        widget.data['location']['localtime_epoch']);
+    var date = DateTime.fromMillisecondsSinceEpoch(
+        widget.data['location']['localtime_epoch'] * 1000);
 
     return Padding(
       padding: const EdgeInsets.all(10),
