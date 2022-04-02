@@ -3,6 +3,7 @@ import 'package:climate_mobile/components/forecastComponent.dart';
 import 'package:climate_mobile/components/mainComponent.dart';
 import 'package:climate_mobile/services/api.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -80,7 +81,16 @@ class _HomePageState extends State<HomePage> {
       ];
     }
 
-    return [const Text('Carregando')];
+    return [
+      Container(
+        padding:
+            EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.35),
+        child: const SpinKitRing(
+          color: Colors.blueGrey,
+          size: 50.0,
+        ),
+      )
+    ];
   }
 
   @override

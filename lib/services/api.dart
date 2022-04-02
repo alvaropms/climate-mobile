@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 
 class Api {
-  final String _key = '8e921b0c9085484cb1a12201220902';
+  final String _key = const String.fromEnvironment('APIKEY');
   String city = 'London';
   String country = 'United Kingdon';
   final String _ipUrl = 'https://ipapi.co/json';
@@ -26,7 +26,8 @@ class Api {
   }
 
   Future getWeatherDataByCity(String city) {
-    this.city = city;
+    this.city =
+        city.substring(0, 1).toUpperCase() + city.substring(1, city.length);
     return _dio.get(_weatherUrl());
   }
 
