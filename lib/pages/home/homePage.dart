@@ -26,6 +26,8 @@ class _HomePageState extends State<HomePage> {
         services.country = data['location']['country'];
         isLoading = false;
       });
+    }).catchError((e) {
+      services.errorDialog(context);
     });
     super.initState();
   }
