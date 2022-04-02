@@ -8,7 +8,7 @@ Com esta aplicação, qualquer um pode conferir os dados climáticos atuais e fu
 
 Entre as informações disponíveis estão dados gerais sobre a temperatura e clima atual, além previsões para os próximos dias.
 
-![climate_mobile.gif (1080×2400) (raw.githubusercontent.com)](https://raw.githubusercontent.com/alvaropms/climate_mobile/main/climate_mobile.gif)
+![climate_mobile.gif (1080×2400) (raw.githubusercontent.com)](https://raw.githubusercontent.com/alvaropms/climate_mobile/main/demo.gif)
 
 ## O que foi aprendido :umbrella:
 * **Flutter**: conceitos básicos para o desenvolvimento de um aplicativo mobile usando uma das ferramentas mais atuais.
