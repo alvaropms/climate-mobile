@@ -17,18 +17,22 @@ class _HomePageState extends State<HomePage> {
   Map data = {};
   Api services = Api();
 
-  @override
-  void initState() {
+  initRequest() {
     var response = services.getWeatherData();
     response.then((value) {
       setState(() {
         data = value.data;
-        services.country = data['location']['country'];
         isLoading = false;
       });
     }).catchError((e) {
       services.errorDialog(context);
+      initRequest();
     });
+  }
+
+  @override
+  void initState() {
+    initRequest();
     super.initState();
   }
 
@@ -46,7 +50,6 @@ class _HomePageState extends State<HomePage> {
     }).then((value) {
       setState(() {
         data = value.data;
-        services.country = data['location']['country'];
         isLoading = false;
       });
     });
@@ -61,9 +64,14 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(
-                  'Tempo agora em ' + services.city,
-                  style: const TextStyle(fontSize: 25),
+                Flexible(
+                  child: Text(
+                    'Tempo agora em ' + services.city,
+                    style: const TextStyle(fontSize: 25),
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                  ),
                 ),
                 Text(
                   services.country,

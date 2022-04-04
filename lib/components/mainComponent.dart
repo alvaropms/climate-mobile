@@ -44,9 +44,15 @@ class _mainComponentState extends State<mainComponent> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                widget.data['current']['condition']['text'],
-                style: textStyle(),
+              Flexible(
+                child: Text(
+                  widget.data['current']['condition']['text'],
+                  style: textStyle(),
+                  overflow: TextOverflow.ellipsis,
+                  softWrap: false,
+                  maxLines: 2,
+                  textAlign: TextAlign.center,
+                ),
               )
             ],
           ),

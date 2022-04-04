@@ -22,13 +22,22 @@ class Api {
     var res = await getCity();
     res = jsonDecode(res.toString());
     city = res['city'];
-    return _dio.get(_weatherUrl());
+    Future request = _dio.get(_weatherUrl());
+    request.then(_setLocation);
+    return request;
   }
 
   Future getWeatherDataByCity(String city) {
-    this.city =
-        city.substring(0, 1).toUpperCase() + city.substring(1, city.length);
-    return _dio.get(_weatherUrl());
+    this.city = city;
+    Future request = _dio.get(_weatherUrl());
+    request.then(_setLocation);
+    return request;
+  }
+
+  _setLocation(value) {
+    Map data = value.data;
+    city = data['location']['name'];
+    country = data['location']['country'];
   }
 
   Future getCity() async {

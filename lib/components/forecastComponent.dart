@@ -77,9 +77,15 @@ class _forecastComponentState extends State<forecastComponent> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                widget.data['day']['condition']['text'],
-                style: textStyle(),
+              Flexible(
+                child: Text(
+                  widget.data['day']['condition']['text'],
+                  style: textStyle(),
+                  overflow: TextOverflow.ellipsis,
+                  softWrap: false,
+                  maxLines: 2,
+                  textAlign: TextAlign.center,
+                ),
               )
             ],
           )
