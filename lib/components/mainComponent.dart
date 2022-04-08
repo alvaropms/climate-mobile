@@ -1,11 +1,10 @@
-import 'dart:convert';
+import 'package:climate_mobile/models/currentWeather.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 
 class mainComponent extends StatefulWidget {
   const mainComponent({Key? key, required this.data}) : super(key: key);
 
-  final Map data;
+  final CurrentWeather data;
 
   @override
   State<mainComponent> createState() => _mainComponentState();
@@ -19,8 +18,7 @@ class _mainComponentState extends State<mainComponent> {
 
   @override
   Widget build(BuildContext context) {
-    var date = DateTime.fromMillisecondsSinceEpoch(
-        widget.data['location']['localtime_epoch'] * 1000);
+    var date = DateTime.fromMillisecondsSinceEpoch(widget.data.date);
 
     return Padding(
       padding: const EdgeInsets.all(10),
@@ -30,10 +28,10 @@ class _mainComponentState extends State<mainComponent> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.network(
-                'https:' + widget.data['current']['condition']['icon'],
+                widget.data.iconUrl,
               ),
               Text(
-                widget.data['current']['temp_c'].toString() + 'ºC',
+                (widget.data.temp).toString() + 'ºC',
                 style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 50,
@@ -46,7 +44,7 @@ class _mainComponentState extends State<mainComponent> {
             children: [
               Flexible(
                 child: Text(
-                  widget.data['current']['condition']['text'],
+                  widget.data.condition,
                   style: textStyle(),
                   overflow: TextOverflow.ellipsis,
                   softWrap: false,
@@ -82,21 +80,11 @@ class _mainComponentState extends State<mainComponent> {
                       ),
                       Column(
                         children: [
-                          Text(
-                              widget.data['forecast']['forecastday'][0]['day']
-                                          ['maxtemp_c']
-                                      .toString() +
-                                  'º C',
+                          Text((widget.data.maxTemp).toString() + 'º C',
                               style: textStyle()),
-                          Text(
-                              widget.data['forecast']['forecastday'][0]['day']
-                                          ['mintemp_c']
-                                      .toString() +
-                                  'º C',
+                          Text((widget.data.minTemp).toString() + 'º C',
                               style: textStyle()),
-                          Text(
-                              widget.data['current']['wind_kph'].toString() +
-                                  ' km/h',
+                          Text((widget.data.wind).toString() + ' km/h',
                               style: textStyle()),
                         ],
                       )
@@ -127,18 +115,18 @@ class _mainComponentState extends State<mainComponent> {
                       ),
                       Column(
                         children: [
-                          Text(
-                              widget.data['current']['pressure_mb'].toString() +
-                                  ' hPa',
+                          Text((widget.data.pressure).toString() + ' hPa',
+                              style: textStyle()),
+                          Text((widget.data.humidity).toString() + '%',
                               style: textStyle()),
                           Text(
-                              widget.data['current']['humidity'].toString() +
-                                  '%',
-                              style: textStyle()),
-                          Text(
-                              date.hour.toString() +
+                              ((date.hour < 10)
+                                      ? '0' + date.hour.toString()
+                                      : date.hour.toString()) +
                                   ':' +
-                                  date.minute.toString(),
+                                  ((date.minute < 10)
+                                      ? '0' + date.minute.toString()
+                                      : date.minute.toString()),
                               style: textStyle()),
                         ],
                       )

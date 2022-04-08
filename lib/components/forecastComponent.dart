@@ -1,9 +1,10 @@
+import 'package:climate_mobile/models/forecastWeather.dart';
 import 'package:flutter/material.dart';
 
 class forecastComponent extends StatefulWidget {
   const forecastComponent({Key? key, required this.data}) : super(key: key);
 
-  final Map data;
+  final ForecastWeather data;
 
   @override
   State<forecastComponent> createState() => _forecastComponentState();
@@ -30,7 +31,7 @@ class _forecastComponentState extends State<forecastComponent> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Text(
-                formatDate(widget.data['date']),
+                formatDate(widget.data.date),
                 style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 25,
@@ -57,20 +58,17 @@ class _forecastComponentState extends State<forecastComponent> {
               Column(
                 children: [
                   Text(
-                    widget.data['day']['maxtemp_c'].toString() + 'º C',
+                    widget.data.maxTemp.toString() + 'º C',
                     style: textStyle(),
                   ),
                   Text(
-                    widget.data['day']['mintemp_c'].toString() + 'º C',
+                    widget.data.minTemp.toString() + 'º C',
                     style: textStyle(),
                   )
                 ],
               ),
               Column(
-                children: [
-                  Image.network(
-                      'https:' + widget.data['day']['condition']['icon'])
-                ],
+                children: [Image.network(widget.data.iconUrl)],
               )
             ],
           ),
@@ -79,7 +77,7 @@ class _forecastComponentState extends State<forecastComponent> {
             children: [
               Flexible(
                 child: Text(
-                  widget.data['day']['condition']['text'],
+                  widget.data.condition,
                   style: textStyle(),
                   overflow: TextOverflow.ellipsis,
                   softWrap: false,

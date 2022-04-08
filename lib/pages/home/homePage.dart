@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:climate_mobile/components/cardComponent.dart';
 import 'package:climate_mobile/components/forecastComponent.dart';
 import 'package:climate_mobile/components/mainComponent.dart';
+import 'package:climate_mobile/models/currentWeather.dart';
+import 'package:climate_mobile/models/forecastWeather.dart';
 import 'package:climate_mobile/services/api.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -14,92 +18,87 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool isLoading = true;
-  Map data = {};
+  CurrentWeather data = CurrentWeather({});
   Api services = Api();
 
-  initRequest() {
-    var response = services.getWeatherData();
-    response.then((value) {
+  _initRequest() {
+    services.getWeatherData().catchError((err) {
+      services.errorDialog(context);
+    }).then((value) {
       setState(() {
-        data = value.data;
+        data.setData(jsonDecode(value.toString()));
         isLoading = false;
       });
-    }).catchError((e) {
-      services.errorDialog(context);
-      initRequest();
     });
   }
 
   @override
   void initState() {
-    initRequest();
+    _initRequest();
     super.initState();
   }
 
-  changeCity(String city) {
-    String aux = services.city;
+  _changeCity(String city) {
     setState(() {
       isLoading = true;
     });
-    services.getWeatherDataByCity(city).catchError((e) {
+    services.getWeatherDataByCity(city).catchError((err) {
+      services.errorDialog(context);
       setState(() {
-        services.city = aux;
         isLoading = false;
       });
-      services.errorDialog(context);
     }).then((value) {
       setState(() {
-        data = value.data;
+        data.setData(jsonDecode(value.toString()));
         isLoading = false;
       });
     });
   }
 
   List<Widget> listElements() {
-    if (!isLoading) {
+    if (isLoading) {
       return [
         Container(
-            margin: const EdgeInsets.only(top: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Flexible(
-                  child: Text(
-                    'Tempo agora em ' + services.city,
-                    style: const TextStyle(fontSize: 25),
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 2,
-                  ),
-                ),
-                Text(
-                  services.country,
-                  style: const TextStyle(fontSize: 10),
-                )
-              ],
-            )),
-        cardComponent(
-          child: mainComponent(data: data),
-        ),
-        cardComponent(
-            child: forecastComponent(data: data['forecast']['forecastday'][0])),
-        cardComponent(
-            child: forecastComponent(data: data['forecast']['forecastday'][1])),
-        cardComponent(
-            child: forecastComponent(data: data['forecast']['forecastday'][2]))
+          padding:
+              EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.35),
+          child: const SpinKitRing(
+            color: Colors.blueGrey,
+            size: 50.0,
+          ),
+        )
       ];
     }
-
     return [
       Container(
-        padding:
-            EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.35),
-        child: const SpinKitRing(
-          color: Colors.blueGrey,
-          size: 50.0,
-        ),
-      )
+          margin: const EdgeInsets.only(top: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Flexible(
+                child: Text(
+                  'Tempo agora em ' + (data.city),
+                  style: const TextStyle(fontSize: 25),
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                ),
+              ),
+              Text(
+                data.country,
+                style: const TextStyle(fontSize: 10),
+              )
+            ],
+          )),
+      cardComponent(
+        child: mainComponent(data: data),
+      ),
+      cardComponent(
+          child: forecastComponent(data: ForecastWeather(data.all, 0))),
+      cardComponent(
+          child: forecastComponent(data: ForecastWeather(data.all, 1))),
+      cardComponent(
+          child: forecastComponent(data: ForecastWeather(data.all, 2)))
     ];
   }
 
@@ -121,7 +120,7 @@ class _HomePageState extends State<HomePage> {
               color: Colors.white,
               child: Center(
                 child: TextField(
-                  onSubmitted: changeCity,
+                  onSubmitted: _changeCity,
                   decoration: const InputDecoration(
                     hintText: 'Procurar cidade',
                     prefixIcon: Icon(Icons.search),
