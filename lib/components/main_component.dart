@@ -1,24 +1,27 @@
-import 'package:climate_mobile/models/currentWeather.dart';
+import 'package:climate_mobile/models/current_weather.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
-class mainComponent extends StatefulWidget {
-  const mainComponent({Key? key, required this.data}) : super(key: key);
+import '../services/api.dart';
 
-  final CurrentWeather data;
+class MainComponent extends StatefulWidget {
+  const MainComponent({Key? key}) : super(key: key);
 
   @override
-  State<mainComponent> createState() => _mainComponentState();
+  State<MainComponent> createState() => _MainComponentState();
 }
 
-class _mainComponentState extends State<mainComponent> {
+class _MainComponentState extends State<MainComponent> {
   TextStyle textStyle() {
     return const TextStyle(
         fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white);
   }
 
+  CurrentWeather data = (GetIt.I.get<Api>()).data;
+
   @override
   Widget build(BuildContext context) {
-    var date = DateTime.fromMillisecondsSinceEpoch(widget.data.date);
+    var date = DateTime.fromMillisecondsSinceEpoch(data.date);
 
     return Padding(
       padding: const EdgeInsets.all(10),
@@ -28,10 +31,10 @@ class _mainComponentState extends State<mainComponent> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.network(
-                widget.data.iconUrl,
+                data.iconUrl,
               ),
               Text(
-                (widget.data.temp).toString() + 'ºC',
+                (data.temp).toString() + 'ºC',
                 style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 50,
@@ -44,7 +47,7 @@ class _mainComponentState extends State<mainComponent> {
             children: [
               Flexible(
                 child: Text(
-                  widget.data.condition,
+                  data.condition,
                   style: textStyle(),
                   overflow: TextOverflow.ellipsis,
                   softWrap: false,
@@ -80,11 +83,11 @@ class _mainComponentState extends State<mainComponent> {
                       ),
                       Column(
                         children: [
-                          Text((widget.data.maxTemp).toString() + 'º C',
+                          Text((data.maxTemp).toString() + 'º C',
                               style: textStyle()),
-                          Text((widget.data.minTemp).toString() + 'º C',
+                          Text((data.minTemp).toString() + 'º C',
                               style: textStyle()),
-                          Text((widget.data.wind).toString() + ' km/h',
+                          Text((data.wind).toString() + ' km/h',
                               style: textStyle()),
                         ],
                       )
@@ -115,9 +118,9 @@ class _mainComponentState extends State<mainComponent> {
                       ),
                       Column(
                         children: [
-                          Text((widget.data.pressure).toString() + ' hPa',
+                          Text((data.pressure).toString() + ' hPa',
                               style: textStyle()),
-                          Text((widget.data.humidity).toString() + '%',
+                          Text((data.humidity).toString() + '%',
                               style: textStyle()),
                           Text(
                               ((date.hour < 10)

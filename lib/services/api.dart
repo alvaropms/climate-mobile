@@ -1,8 +1,19 @@
 import 'dart:convert';
+import 'package:climate_mobile/models/current_weather.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:mobx/mobx.dart';
 
-class Api {
+part 'api.g.dart';
+
+class Api = _Api with _$Api;
+
+abstract class _Api with Store {
+  @observable
+  CurrentWeather data = CurrentWeather({});
+  @observable
+  bool isLoading = false;
+
   final String _key = const String.fromEnvironment('APIKEY');
   final String _ipUrl = 'https://ipapi.co/json';
 
@@ -20,15 +31,25 @@ class Api {
     return _dio.get(_ipUrl);
   }
 
+  @action
   Future getWeatherData() async {
+    isLoading = true;
     var res = await _getCity();
     res = jsonDecode(res.toString());
     Future request = _dio.get(_weatherUrl(res['city']));
+    request.then((value) {
+      data.setData(jsonDecode(value.toString()));
+    }).whenComplete(() => isLoading = false);
     return request;
   }
 
+  @action
   Future getWeatherDataByCity(String city) {
+    isLoading = true;
     Future request = _dio.get(_weatherUrl(city));
+    request.then((value) {
+      data.setData(jsonDecode(value.toString()));
+    }).whenComplete(() => isLoading = false);
     return request;
   }
 

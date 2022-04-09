@@ -1,17 +1,15 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 
-class cardComponent extends StatefulWidget {
-  const cardComponent({Key? key, required this.child}) : super(key: key);
+class CardComponent extends StatefulWidget {
+  const CardComponent({Key? key, required this.child}) : super(key: key);
 
   final Widget child;
 
   @override
-  State<cardComponent> createState() => _cardComponentState();
+  State<CardComponent> createState() => _CardComponentState();
 }
 
-class _cardComponentState extends State<cardComponent> {
+class _CardComponentState extends State<CardComponent> {
   @override
   Widget build(BuildContext context) {
     double wi = MediaQuery.of(context).size.width * 0.1;

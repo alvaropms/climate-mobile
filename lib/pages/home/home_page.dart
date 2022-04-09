@@ -1,13 +1,11 @@
-import 'dart:convert';
-
-import 'package:climate_mobile/components/cardComponent.dart';
-import 'package:climate_mobile/components/forecastComponent.dart';
-import 'package:climate_mobile/components/mainComponent.dart';
-import 'package:climate_mobile/models/currentWeather.dart';
-import 'package:climate_mobile/models/forecastWeather.dart';
+import 'package:climate_mobile/components/card_component.dart';
+import 'package:climate_mobile/components/forecast_component.dart';
+import 'package:climate_mobile/components/main_component.dart';
 import 'package:climate_mobile/services/api.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:get_it/get_it.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -17,46 +15,24 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  bool isLoading = true;
-  CurrentWeather data = CurrentWeather({});
-  Api services = Api();
-
-  _initRequest() {
-    services.getWeatherData().catchError((err) {
-      services.errorDialog(context);
-    }).then((value) {
-      setState(() {
-        data.setData(jsonDecode(value.toString()));
-        isLoading = false;
-      });
-    });
-  }
+  Api services = GetIt.I.get<Api>();
 
   @override
   void initState() {
-    _initRequest();
+    services.getWeatherData().catchError((err) {
+      services.errorDialog(context);
+    });
     super.initState();
   }
 
   _changeCity(String city) {
-    setState(() {
-      isLoading = true;
-    });
     services.getWeatherDataByCity(city).catchError((err) {
       services.errorDialog(context);
-      setState(() {
-        isLoading = false;
-      });
-    }).then((value) {
-      setState(() {
-        data.setData(jsonDecode(value.toString()));
-        isLoading = false;
-      });
     });
   }
 
   List<Widget> listElements() {
-    if (isLoading) {
+    if (services.isLoading) {
       return [
         Container(
           padding:
@@ -77,7 +53,7 @@ class _HomePageState extends State<HomePage> {
             children: [
               Flexible(
                 child: Text(
-                  'Tempo agora em ' + (data.city),
+                  'Tempo agora em ' + (services.data.city),
                   style: const TextStyle(fontSize: 25),
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.ellipsis,
@@ -85,20 +61,20 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               Text(
-                data.country,
+                services.data.country,
                 style: const TextStyle(fontSize: 10),
               )
             ],
           )),
-      cardComponent(
-        child: mainComponent(data: data),
+      const CardComponent(
+        child: MainComponent(),
       ),
-      cardComponent(
-          child: forecastComponent(data: ForecastWeather(data.all, 0))),
-      cardComponent(
-          child: forecastComponent(data: ForecastWeather(data.all, 1))),
-      cardComponent(
-          child: forecastComponent(data: ForecastWeather(data.all, 2)))
+      const CardComponent(child: ForecastComponent(day: 0)),
+      const CardComponent(
+          child: ForecastComponent(
+        day: 0,
+      )),
+      const CardComponent(child: ForecastComponent(day: 2))
     ];
   }
 
@@ -130,8 +106,10 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ),
-        SliverList(
-          delegate: SliverChildListDelegate(listElements()),
+        Observer(
+          builder: (_) => SliverList(
+            delegate: SliverChildListDelegate(listElements()),
+          ),
         ),
       ],
     );

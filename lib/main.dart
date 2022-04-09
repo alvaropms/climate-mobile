@@ -1,7 +1,12 @@
+import 'package:climate_mobile/services/api.dart';
 import 'package:flutter/material.dart';
-import './pages/home/homePage.dart';
+import 'package:get_it/get_it.dart';
+import 'pages/home/home_page.dart';
 
 void main() {
+  GetIt getIt = GetIt.I;
+  getIt.registerSingleton<Api>(Api());
+
   runApp(const MyApp());
 }
 

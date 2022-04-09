@@ -1,16 +1,19 @@
-import 'package:climate_mobile/models/forecastWeather.dart';
+import 'package:climate_mobile/models/forecast_weather.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
-class forecastComponent extends StatefulWidget {
-  const forecastComponent({Key? key, required this.data}) : super(key: key);
+import '../services/api.dart';
 
-  final ForecastWeather data;
+class ForecastComponent extends StatefulWidget {
+  const ForecastComponent({Key? key, required this.day}) : super(key: key);
+
+  final int day;
 
   @override
-  State<forecastComponent> createState() => _forecastComponentState();
+  State<ForecastComponent> createState() => _ForecastComponentState();
 }
 
-class _forecastComponentState extends State<forecastComponent> {
+class _ForecastComponentState extends State<ForecastComponent> {
   TextStyle textStyle() {
     return const TextStyle(
         fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white);
@@ -21,8 +24,23 @@ class _forecastComponentState extends State<forecastComponent> {
     return aux[2] + '/' + aux[1];
   }
 
+  late ForecastWeather data;
+
   @override
   Widget build(BuildContext context) {
+    switch (widget.day) {
+      case 0:
+        data = GetIt.I.get<Api>().data.today;
+        break;
+      case 1:
+        data = GetIt.I.get<Api>().data.tomorrow;
+        break;
+      case 2:
+        data = GetIt.I.get<Api>().data.afterTomorrow;
+        break;
+      default:
+    }
+
     return Padding(
       padding: const EdgeInsets.all(10),
       child: Column(
@@ -31,7 +49,7 @@ class _forecastComponentState extends State<forecastComponent> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Text(
-                formatDate(widget.data.date),
+                formatDate(data.date),
                 style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 25,
@@ -58,17 +76,17 @@ class _forecastComponentState extends State<forecastComponent> {
               Column(
                 children: [
                   Text(
-                    widget.data.maxTemp.toString() + 'º C',
+                    data.maxTemp.toString() + 'º C',
                     style: textStyle(),
                   ),
                   Text(
-                    widget.data.minTemp.toString() + 'º C',
+                    data.minTemp.toString() + 'º C',
                     style: textStyle(),
                   )
                 ],
               ),
               Column(
-                children: [Image.network(widget.data.iconUrl)],
+                children: [Image.network(data.iconUrl)],
               )
             ],
           ),
@@ -77,7 +95,7 @@ class _forecastComponentState extends State<forecastComponent> {
             children: [
               Flexible(
                 child: Text(
-                  widget.data.condition,
+                  data.condition,
                   style: textStyle(),
                   overflow: TextOverflow.ellipsis,
                   softWrap: false,

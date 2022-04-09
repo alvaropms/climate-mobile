@@ -1,3 +1,5 @@
+import 'package:climate_mobile/models/forecast_weather.dart';
+
 class CurrentWeather {
   int date = 0;
   String iconUrl = '';
@@ -10,13 +12,15 @@ class CurrentWeather {
   int humidity = 0;
   String city = '';
   String country = '';
-  Map all = {};
+  ForecastWeather today = ForecastWeather({}, 0);
+  ForecastWeather tomorrow = ForecastWeather({}, 1);
+  ForecastWeather afterTomorrow = ForecastWeather({}, 2);
 
   CurrentWeather(Map data) {
     setData(data);
   }
 
-  setData(Map data) {
+  setData(Map data) async {
     date = data['location']?['localtime_epoch'] ?? 0;
     iconUrl = 'https:' + (data['current']?['condition']?['icon'] ?? '');
     temp = data['current']?['temp_c'] ?? 0;
@@ -28,6 +32,8 @@ class CurrentWeather {
     humidity = data['current']?['humidity'] ?? 0;
     city = data['location']?['name'] ?? '';
     country = data['location']?['country'] ?? '';
-    all = data;
+    today.setData(data, 0);
+    tomorrow.setData(data, 1);
+    afterTomorrow.setData(data, 2);
   }
 }
